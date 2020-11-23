@@ -6,9 +6,9 @@
 #' number of clusters, and number of observations within cluster, this function creates a data set with the
 #' appropriate relationships. Variables X, Y, and Z are each drawn from N~(0,1).
 #'
-#' @usage simMixedXYZ(nCluster = nCluster, nObs = nObs,
-#'  db0 = db0, db1 = db1, db2 = db2, db3 = db3, db4 = db4, db5 = db5, db6 = db6, db7 = db7,
-#'  SDb0 = SDb0, SDresid = SDresid, XWithin = TRUE, ZWithin = FALSE, WWithin = TRUE)
+#' @usage simMixedXYZ(nCluster, nObs,
+#'  db0, db1, db2, db3, db4, db5, db6, db7,
+#'  SDb0, SDresid, XWithin = TRUE, ZWithin = TRUE, WWithin = TRUE)
 #' @param nCluster Integer. Number of clusters (level-2 observations).
 #' @param nObs Integer. Number of observations within each cluster.
 #' @param db0 Numeric. Effect size of b0.
@@ -26,12 +26,12 @@
 #' @param WWithin Logical. If TRUE, variable W is simulated as a within-cluster variable. If FALSE, variable W is simulated as a between-cluster variable.
 #' @return A data frame with the following columns:
 #' \itemize{
-#' \item{"Cluster"}{Cluster identification number.}
-#' \item{"Observation"}{Obervcation number within cluster.}
-#' \item{"Y"}{Outcome variable.}
-#' \item{"X"}{X variable.}
-#' \item{"Z"}{Z variable.}
-#' \item{"W"}{W variable.}
+#' \item{Cluster:}{ Cluster identification number.}
+#' \item{Observation:}{ Observation number within cluster.}
+#' \item{Y:}{ Outcome variable.}
+#' \item{X:}{ X variable.}
+#' \item{Z:}{ Z variable.}
+#' \item{W:}{ W variable.}
 #' }
 #' @examples
 #' library(mixedPowerSim)
