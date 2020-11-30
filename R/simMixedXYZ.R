@@ -85,7 +85,7 @@ simMixedXYZ <- function(nCluster, nObs, type = "raw",
   group <- rep(1:nCluster, each = nObs)
   obs <- rep(1:nObs, nCluster)
 
-  if (type = "raw"){
+  if (type == "raw"){
     b0fixed <- b0
     b0rand <- rep(stats::rnorm(nCluster,b0fixed,SDb0),each = nObs)
     b1 <- b1
@@ -113,7 +113,7 @@ simMixedXYZ <- function(nCluster, nObs, type = "raw",
 
   }
 
-  if (type = "slopeDifference"){
+  if (type == "slopeDifference"){
     Xmat <- matrix(c(0,2,2,
                      2,0,2,
                      2,0,-2,
@@ -142,7 +142,7 @@ simMixedXYZ <- function(nCluster, nObs, type = "raw",
     db7 <- b7/sqrt(SDb0^2+SDresid^2)
   }
 
-  if (type = "effectSize"){
+  if (type == "effectSize"){
     b0fixed <- db0*sqrt(SDb0^2+SDresid^2)
     b0rand <- rep(stats::rnorm(nCluster,b0fixed,SDb0),each = nObs)
     b1 <- db1*sqrt(SDb0^2+SDresid^2)
