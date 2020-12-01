@@ -31,7 +31,7 @@
 #'  db3 = db3, db4 = db4, db5 = db5, db6 = db6, db7 = db7,
 #'  SDb0 = SDb0, SDresid = SDresid, XWithin = TRUE, ZWithin = FALSE, WWithin = TRUE)
 #'
-#'  mod <- lmer(Y~X * Z * W + (1|Cluster), data = simDat)
+#'  mod <- lmer(Y~X * Z * W + (1|Cluster), data = simDat$simulatedData)
 #'
 #'  difTest <- slopeDif(mod)
 #'

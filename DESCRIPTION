@@ -12,4 +12,5 @@ RoxygenNote: 7.1.0
 Imports:
     stats (>= 4.0.2),
     graphics (>= 4.0.2),
-    lme4 (>= 1.1-23)
+    lme4 (>= 1.1-23),
+    utils (>= 4.0.2)

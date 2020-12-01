@@ -4,15 +4,22 @@
 #'
 #' By specifying effect sizes (\code{db0}, ..., \code{db7}) of betas as seen in Dawson and Richter (2006),
 #' number of clusters, and number of observations within cluster, this function creates a data set with the
-#' appropriate relationships. Variables X, Y, and Z are each drawn from N~(0,1).
+#' appropriate relationships. Variables X, Y, and Z are each drawn from N~(0,1). Alternative specifications
+#' based on model coefficents or slope differences are also possible.
 #'
-#' @usage simMixedXYZ(nCluster, nObs,
-#'  db0, db1, db2, db3, db4, db5, db6, db7,
-#'  SDb0, SDresid, XWithin = TRUE, ZWithin = TRUE, WWithin = TRUE)
+#' @usage simMixedXYZ(nCluster, nObs, type = c("raw", "effectSize", "slopeDifference"),
+#' b0 = 0, b1 = 0, b2 = 0, b3 = 0,
+#' b4 = 0, b5 = 0, b6 = 0, b7 = 0,
+#' a_Dif = NA, b_Dif = NA,c_Dif = NA,
+#' d_Dif = NA, e_Dif = NA, f_Dif = NA,
+#' db0 = NA, db1 = NA, db2 = NA,db3 = NA,
+#' db4 = NA, db5 = NA, db6 = NA, db7 = NA,
+#' SDb0 = 1, SDresid = 1, XWithin = TRUE,
+#' ZWithin = TRUE, WWithin = TRUE, reliability = 1)
 #' @param nCluster Integer. Number of clusters (level-2 observations).
 #' @param nObs Integer. Number of observations within each cluster.
 #' @param type Character. One of "raw", "effectSize", or "slopeDifference".
-#' @param b0 Numeric. Required for all types. Value of b0.
+#' @param b0 Numeric. Required for type = "raw" and type = "slopeDifference". Value of b0.
 #' @param b1 Numeric. Required for type = "raw". Value of b1.
 #' @param b2 Numeric. Required for type = "raw". Value of b2.
 #' @param b3 Numeric. Required for type = "raw". Value of b3.
@@ -39,14 +46,12 @@
 #' @param XWithin Logical. Required for all types. If TRUE, variable X is simulated as a within-cluster variable. If FALSE, variable X is simulated as a between-cluster variable.
 #' @param ZWithin Logical. Required for all types. If TRUE, variable Z is simulated as a within-cluster variable. If FALSE, variable Z is simulated as a between-cluster variable.
 #' @param WWithin Logical. Required for all types. If TRUE, variable W is simulated as a within-cluster variable. If FALSE, variable W is simulated as a between-cluster variable.
-#' @return A data frame with the following columns:
+#' @param reliability Numeric. Required for all types. A value between 0 and 1 defining the reliability of predictors.
+#' @return A list with the following components:
 #' \itemize{
-#' \item{Cluster:}{ Cluster identification number.}
-#' \item{Observation:}{ Observation number within cluster.}
-#' \item{Y:}{ Outcome variable.}
-#' \item{X:}{ X variable.}
-#' \item{Z:}{ Z variable.}
-#' \item{W:}{ W variable.}
+#' \item{simulatedData:}{ A data set with cloumns for cluster ID, observation ID within cluster, Y, X, Z, and W.}
+#' \item{expectedCoefficients:}{ Expected coefficents of a mixed-effects model. (Note, these will not be the same as the observed coefficents.)}
+#' \item{expectedSlopeDifferences:}{ Expected slope differences. Created from a best fit linear combination. (Note, these will not be the same as the observed slope differences.)}
 #' }
 #' @examples
 #' library(mixedPowerSim)
@@ -65,7 +70,7 @@
 #' simDat <- simMixedXYZ(nCluster = nCluster, nObs = nObs,
 #'  db0 = db0, db1 = db1, db2 = db2,
 #'  db3 = db3, db4 = db4, db5 = db5, db6 = db6, db7 = db7,
-#'  SDb0 = SDb0, SDresid = SDresid, XWithin = TRUE, ZWithin = FALSE, WWithin = TRUE)
+#'  SDb0 = SDb0, SDresid = SDresid, XWithin = TRUE, ZWithin = FALSE, WWithin = TRUE, reliability = 1)
 #' @export
 #'
 simMixedXYZ <- function(nCluster, nObs, type = "raw",
@@ -76,7 +81,7 @@ simMixedXYZ <- function(nCluster, nObs, type = "raw",
                         db0 = NA, db1 = NA, db2 = NA,db3 = NA,
                         db4 = NA, db5 = NA, db6 = NA, db7 = NA,
                         SDb0 = 1, SDresid = 1, XWithin = TRUE,
-                        ZWithin = TRUE, WWithin = TRUE){
+                        ZWithin = TRUE, WWithin = TRUE, reliability = 1){
 
   if (!type %in% c("raw", "effectSize", "slopeDifference") ){
     stop('Please specify argument "type" as either "raw" or "effectSize" or "slopeDifference".')
@@ -178,6 +183,28 @@ simMixedXYZ <- function(nCluster, nObs, type = "raw",
     Z <- rep(stats::rnorm(nCluster), each = nObs)
   }
 
+  if (!is.numeric(reliability) | reliability < 0 | reliability > 1){
+    stop('The "reliability" argument must be a numeric value between 0 and 1.')
+  }
+
+  if (reliability != 1){
+    if(XWithin == TRUE){
+      X <- reliability*X + stats::rnorm(nCluster*nObs,0,sqrt(1-reliability^2))
+    } else {
+      X <- reliability*X + rep(stats::rnorm(nCluster0,sqrt(1-reliability^2)), each = nObs)
+    }
+    if(WWithin == TRUE){
+      W <- reliability*W + stats::rnorm(nCluster*nObs,0,sqrt(1-reliability^2))
+    } else {
+      W <- reliability*W + rep(stats::rnorm(nCluster0,sqrt(1-reliability^2)), each = nObs)
+    }
+    if(ZWithin == TRUE){
+      Z <- reliability*Z + stats::rnorm(nCluster*nObs,0,sqrt(1-reliability^2))
+    } else {
+      Z <- reliability*Z + rep(stats::rnorm(nCluster,sqrt(1-reliability^2)), each = nObs)
+    }
+  }
+
   Y <- b0rand + b1*X + b2*W + b3*Z + b4*X*Z + b5*X*W + b6*Z*W + b7*X*Z*W + stats::rnorm(nCluster*nObs,0,SDresid)
 
   coefMat <- data.frame("coefficients" = paste("b", 0:7, sep = ""),
@@ -188,7 +215,7 @@ simMixedXYZ <- function(nCluster, nObs, type = "raw",
                                  "values" = c(a_Dif, b_Dif, c_Dif, d_Dif, e_Dif, f_Dif))
 
   simDat <- data.frame("Cluster" = group, "Observation" = obs,Y,X,W,Z)
-  resList <- list("simulatedData" = simDat, "coefficients" = coefMat, "slopeDifferences" = slopeDifferences)
+  resList <- list("simulatedData" = simDat, "expectedCoefficients" = coefMat, "expectedSlopeDifferences" = slopeDifferences)
   return(resList)
 }
 

@@ -4,50 +4,85 @@
 \alias{simMixedXYZ}
 \title{Simulate data for a three-way interaction of nested observations.}
 \usage{
-simMixedXYZ(nCluster, nObs,
- db0, db1, db2, db3, db4, db5, db6, db7,
- SDb0, SDresid, XWithin = TRUE, ZWithin = TRUE, WWithin = TRUE)
+simMixedXYZ(nCluster, nObs, type = c("raw", "effectSize", "slopeDifference"),
+b0 = 0, b1 = 0, b2 = 0, b3 = 0,
+b4 = 0, b5 = 0, b6 = 0, b7 = 0,
+a_Dif = NA, b_Dif = NA,c_Dif = NA,
+d_Dif = NA, e_Dif = NA, f_Dif = NA,
+db0 = NA, db1 = NA, db2 = NA,db3 = NA,
+db4 = NA, db5 = NA, db6 = NA, db7 = NA,
+SDb0 = 1, SDresid = 1, XWithin = TRUE,
+ZWithin = TRUE, WWithin = TRUE, reliability = 1)
 }
 \arguments{
 \item{nCluster}{Integer. Number of clusters (level-2 observations).}
 
 \item{nObs}{Integer. Number of observations within each cluster.}
 
-\item{db0}{Numeric. Effect size of b0.}
+\item{type}{Character. One of "raw", "effectSize", or "slopeDifference".}
 
-\item{db1}{Numeric. Effect size of b1.}
+\item{b0}{Numeric. Required for type = "raw" and type = "slopeDifference". Value of b0.}
 
-\item{db2}{Numeric. Effect size of b2.}
+\item{b1}{Numeric. Required for type = "raw". Value of b1.}
 
-\item{db3}{Numeric. Effect size of b3.}
+\item{b2}{Numeric. Required for type = "raw". Value of b2.}
 
-\item{db4}{Numeric. Effect size of b4.}
+\item{b3}{Numeric. Required for type = "raw". Value of b3.}
 
-\item{db5}{Numeric. Effect size of b5.}
+\item{b4}{Numeric. Required for type = "raw". Value of b4.}
 
-\item{db6}{Numeric. Effect size of b6.}
+\item{b5}{Numeric. Required for type = "raw". Value of b5.}
 
-\item{db7}{Numeric. Effect size of b7.}
+\item{b6}{Numeric. Required for type = "raw". Value of b6.}
 
-\item{SDb0}{Numeric. Between cluster standard deviation of b0.}
+\item{b7}{Numeric. Required for type = "raw". Value of b7.}
 
-\item{SDresid}{Numeric. Standard deviation of residuals.}
+\item{db0}{Numeric. Required for type = "effectSize". Effect size of b0.}
 
-\item{XWithin}{Logical. If TRUE, variable X is simulated as a within-cluster variable. If FALSE, variable X is simulated as a between-cluster variable.}
+\item{db1}{Numeric. Required for type = "effectSize". Effect size of b1.}
 
-\item{ZWithin}{Logical. If TRUE, variable Z is simulated as a within-cluster variable. If FALSE, variable Z is simulated as a between-cluster variable.}
+\item{db2}{Numeric. Required for type = "effectSize". Effect size of b2.}
 
-\item{WWithin}{Logical. If TRUE, variable W is simulated as a within-cluster variable. If FALSE, variable W is simulated as a between-cluster variable.}
+\item{db3}{Numeric. Required for type = "effectSize". Effect size of b3.}
+
+\item{db4}{Numeric. Required for type = "effectSize". Effect size of b4.}
+
+\item{db5}{Numeric. Required for type = "effectSize". Effect size of b5.}
+
+\item{db6}{Numeric. Required for type = "effectSize". Effect size of b6.}
+
+\item{db7}{Numeric. Required for type = "effectSize". Effect size of b7.}
+
+\item{SDb0}{Numeric. Required for all types. Between cluster standard deviation of b0.}
+
+\item{SDresid}{Numeric. Required for all types. Standard deviation of residuals.}
+
+\item{XWithin}{Logical. Required for all types. If TRUE, variable X is simulated as a within-cluster variable. If FALSE, variable X is simulated as a between-cluster variable.}
+
+\item{ZWithin}{Logical. Required for all types. If TRUE, variable Z is simulated as a within-cluster variable. If FALSE, variable Z is simulated as a between-cluster variable.}
+
+\item{WWithin}{Logical. Required for all types. If TRUE, variable W is simulated as a within-cluster variable. If FALSE, variable W is simulated as a between-cluster variable.}
+
+\item{reliability}{Numeric. Required for all types. A value between 0 and 1 defining the reliability of predictors.}
+
+\item{a_dif}{Numeric. Required for type = "slopeDifference". Value of slope test "a".}
+
+\item{b_dif}{Numeric. Required for type = "slopeDifference". Value of slope test "b".}
+
+\item{c_dif}{Numeric. Required for type = "slopeDifference". Value of slope test "c".}
+
+\item{d_dif}{Numeric. Required for type = "slopeDifference". Value of slope test "d".}
+
+\item{e_dif}{Numeric. Required for type = "slopeDifference". Value of slope test "e".}
+
+\item{f_dif}{Numeric. Required for type = "slopeDifference". Value of slope test "f".}
 }
 \value{
-A data frame with the following columns:
+A list with the following components:
 \itemize{
-\item{Cluster:}{ Cluster identification number.}
-\item{Observation:}{ Observation number within cluster.}
-\item{Y:}{ Outcome variable.}
-\item{X:}{ X variable.}
-\item{Z:}{ Z variable.}
-\item{W:}{ W variable.}
+\item{simulatedData:}{ A data set with cloumns for cluster ID, observation ID within cluster, Y, X, Z, and W.}
+\item{expectedCoefficients:}{ Expected coefficents of a mixed-effects model. (Note, these will not be the same as the observed coefficents.)}
+\item{expectedSlopeDifferences:}{ Expected slope differences. Created from a best fit linear combination. (Note, these will not be the same as the observed slope differences.)}
 }
 }
 \description{
@@ -56,7 +91,8 @@ Creates a simulated data set based upon the supplied arguments.
 \details{
 By specifying effect sizes (\code{db0}, ..., \code{db7}) of betas as seen in Dawson and Richter (2006),
 number of clusters, and number of observations within cluster, this function creates a data set with the
-appropriate relationships. Variables X, Y, and Z are each drawn from N~(0,1).
+appropriate relationships. Variables X, Y, and Z are each drawn from N~(0,1). Alternative specifications
+based on model coefficents or slope differences are also possible.
 }
 \examples{
 library(mixedPowerSim)
@@ -75,5 +111,5 @@ SDresid <- 5
 simDat <- simMixedXYZ(nCluster = nCluster, nObs = nObs,
  db0 = db0, db1 = db1, db2 = db2,
  db3 = db3, db4 = db4, db5 = db5, db6 = db6, db7 = db7,
- SDb0 = SDb0, SDresid = SDresid, XWithin = TRUE, ZWithin = FALSE, WWithin = TRUE)
+ SDb0 = SDb0, SDresid = SDresid, XWithin = TRUE, ZWithin = FALSE, WWithin = TRUE, reliability = 1)
 }
