@@ -15,6 +15,14 @@ knitr::opts_chunk$set(
 library(knitr)
 ```
 
-# Usage Example
+# Download
+```{r}
+# install.packages("devtools")
+devtools::install_github("stevenGray/mixedPowerSim")
+```
+
+# Usage
+See model examples
+
 
 
