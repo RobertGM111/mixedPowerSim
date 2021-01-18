@@ -4,10 +4,14 @@
 \alias{slopeDif}
 \title{Conduct a slope difference test for three-way interaction mixed-effects models.}
 \usage{
-slopeDif(x)
+slopeDif(x, )
 }
 \arguments{
 \item{x}{An object of class "lmerMod". The result of an \code{lmer()} function with a random intercept.}
+
+\item{ZWithin}{Logical. Required for all types. If TRUE, variable Z is simulated as a within-cluster variable. If FALSE, variable Z is simulated as a between-cluster variable.}
+
+\item{WWithin}{Logical. Required for all types. If TRUE, variable W is simulated as a within-cluster variable. If FALSE, variable W is simulated as a between-cluster variable.}
 }
 \value{
 An object of class "slopetest" with the following components:

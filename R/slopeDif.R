@@ -4,8 +4,10 @@
 #' Additionally, this function calculates the slope differences between all slope pairs.
 #'
 #'
-#' @usage slopeDif(x)
+#' @usage slopeDif(x, )
 #' @param x An object of class "lmerMod". The result of an \code{lmer()} function with a random intercept.
+#' @param zWithin Logical. Required for all types. If TRUE, variable Z is simulated as a within-cluster variable. If FALSE, variable Z is simulated as a between-cluster variable.
+#' @param wWithin Logical. Required for all types. If TRUE, variable W is simulated as a within-cluster variable. If FALSE, variable W is simulated as a between-cluster variable.
 #' @return An object of class "slopetest" with the following components:
 #' \itemize{
 #' \item{Expected_Y: }{A data frame with the expected values of Y at high and low values of X, Z, and W.}
@@ -37,7 +39,7 @@
 #'
 #'  slopeDif(mod)
 #' @export
-slopeDif <- function(x){
+slopeDif <- function(x, zWithin = NA, wWithin = NA){
   b0 <- lme4::fixef(x)[1]
   b1 <- lme4::fixef(x)[2]
   b2 <- lme4::fixef(x)[3]
@@ -88,8 +90,11 @@ slopeDif <- function(x){
                        ((Zhi-Zlo) * (Zhi*Wlo -Zlo*Whi) * sMat[4,7]) +
                        ((Whi-Wlo) * (Zhi*Wlo -Zlo*Whi) * sMat[5,7])))
 
+
+  if (is.na(zWithin) | is.na(wWithin)){
   zWithin <- ifelse(sum(c(by(x@frame[,3], x@frame[,5], stats::var))) == 0, FALSE, TRUE)
   wWithin <- ifelse(sum(c(by(x@frame[,4], x@frame[,5], stats::var))) == 0, FALSE, TRUE)
+  }
 
   res <- data.frame("Y" = Y,
                     "X" = c("HIGH", "HIGH", "HIGH", "HIGH", "LOW", "LOW", "LOW", "LOW"),
